@@ -1,11 +1,11 @@
 # json_view
 
 #### 介绍
-header-only c++ json库，致力于最好的平均性能，将c++开发变为Schemaless高效率开发的利器
-支持bson格式
-当使用parse对json/bson数据生成json_view时，只是数据生成一个view，减少内存拷贝，提高性能
-当使用json的parse默认使用lazy模式，惰性求值
-需要c++17以上版本
+* header-only c++ json库，致力于最好的平均性能，将c++开发变为Schemaless高效率开发的利器
+* 支持bson格式
+* 当使用parse对json/bson数据生成json_view时，只是数据生成一个view，减少内存拷贝，提高性能
+* 当使用json的parse默认使用lazy模式，惰性求值
+* 需要c++17以上版本
 
 #### 使用说明
 
