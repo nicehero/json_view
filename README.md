@@ -41,6 +41,6 @@ j2.parse_bson(bson);//parse bson to json_view
 ```
 #### Acknowledgements
 
-Parse number and write number methods use [jsoncons](https://danielaparker.github.io/jsoncons/)code
+Parse number and write number methods use [jsoncons](https://danielaparker.github.io/jsoncons/) code
 
 
