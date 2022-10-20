@@ -75,6 +75,9 @@ namespace nicehero {
 			get_type_ref() = value_type::string_view_value;
 		}
 		viewvalue(const copy_str_ref& cpystr) {
+			m_start = nullptr;
+			m_len = 0;
+			get_type_ref() = value_type::string_view_value;
 			init(cpystr);
 		}
 		viewvalue(uint64_t v) {
