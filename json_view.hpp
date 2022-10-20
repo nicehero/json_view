@@ -159,8 +159,6 @@ namespace nicehero
 				m_container->resize(rhs.m_container->size());
 				for (size_t i = 0; i < rhs.m_container->size(); ++i) {
 					kjson_view& kjv = rhs.m_container->at(i);
-					auto rkey = copy_str_ref(kjv.first);
-					m_container->at(i).first.init(rkey);
 					m_container->at(i).second = kjv.second;
 				}
 			}

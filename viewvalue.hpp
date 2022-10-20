@@ -157,6 +157,9 @@ namespace nicehero {
 				delete[] m_strlong;
 				m_strlong = nullptr;
 			}
+			if (cpystr.m_str == nullptr) {
+				init(nullptr);
+			}
 			auto len_ = cpystr.m_len;
 			if (len_ < 1) {
 				get_type_ref() = value_type::string_short_value;
