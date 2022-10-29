@@ -106,8 +106,9 @@ namespace nicehero
 				for (size_t i = 0;i < rhs.m_container->size(); ++ i) {
 					kjson_view& kjv = rhs.m_container->at(i);
 					auto rkey = copy_str_ref(kjv.first);
-					m_container->at(i).first.init(rkey);
-					m_container->at(i).second = kjv.second;
+					auto& v = m_container->at(i);
+ 					v.first.init(rkey);
+					v.second = kjv.second;
 					if (kjv.second.m_type != json_type::json_delete) {
 						m_keys->emplace(rkey, uint32_t(i));
 					}
@@ -145,8 +146,9 @@ namespace nicehero
 				for (size_t i = 0; i < rhs.m_container->size(); ++i) {
 					kjson_view& kjv = rhs.m_container->at(i);
 					auto rkey = copy_str_ref(kjv.first);
-					m_container->at(i).first.init(rkey);
-					m_container->at(i).second = kjv.second;
+					auto& v = m_container->at(i);
+					v.first.init(rkey);
+					v.second = kjv.second;
 					if (kjv.second.m_type != json_type::json_delete) {
 						m_keys->emplace(rkey, uint32_t(i));
 					}
@@ -191,6 +193,11 @@ namespace nicehero
 			m_value.init(t);
 			return *this;
 		}
+		json_view& operator=(int t) noexcept {
+			init(json_type::json_int64);
+			m_value.init(int64_t(t));
+			return *this;
+		}
 		json_view& operator=(double t) noexcept {
 			init(json_type::json_double);
 			m_value.init(t);
@@ -199,6 +206,11 @@ namespace nicehero
 		json_view& operator=(const std::string& t) noexcept {
 			init(json_type::json_string);
 			m_value.init(t);
+			return *this;
+		}
+		json_view& operator=(const char* t) noexcept {
+			init(json_type::json_string);
+			m_value.init(copy_str_ref(t, uint32_t(strlen(t))));
 			return *this;
 		}
 		json_view& operator=(const copy_str_ref& t) noexcept {
@@ -875,7 +887,7 @@ namespace nicehero
 		static const char* lstrip(const char* jdata) {
 			while (true) {
 				if (*jdata == '\0') {
-					return nullptr;
+					return jdata;
 				}
 				if ((*jdata >= '\t' && *jdata <= '\r') || *jdata == ' ') {
 					++jdata;
@@ -914,6 +926,14 @@ namespace nicehero
 				return m_container->at(it->second).second;
 			}
 			throw exception("error type");
+		}
+
+		json_view& operator[](int index_) {
+			if (m_type != json_type::json_array || !m_container || index_ >= m_container->size())
+			{
+				throw exception("error index");
+			}
+			return m_container->at(index_).second;
 		}
 
 		json_view& add_member(const jvalue_type& key) {
@@ -1488,6 +1508,9 @@ namespace nicehero
 			for (size_t i = 0; i < s; ++ i) {
 				auto& kv = (*m_container)[i];
 				auto& v = kv.second;
+				if (v.m_type == json_type::json_delete) {
+					continue;
+				}
 				uint8_t btype = v.get_bson_type();
 				o.push_back(btype);
 				kv.first.write2cstrbuffer(o);

@@ -44,6 +44,11 @@ namespace nicehero {
 		string_long_value,
 		boolean_value,
 	};
+	enum class boolean_value_type : uint8_t
+	{
+		boolean_value_true,
+		boolean_value_false,
+	};
 	class viewvalue;
 	struct copy_str_ref {
 		const char* m_str;
@@ -123,13 +128,25 @@ namespace nicehero {
 			m_ui64 = v;
 			get_type_ref() = value_type::uint64_value;
 		}
-		void init(bool v) {
+		void init(boolean_value_type v) {
 			if (get_type_ref() == value_type::string_long_value && m_strlong) {
 				delete[] m_strlong;
 				m_strlong = nullptr;
 			}
-			m_boolean = v;
+			if (v == boolean_value_type::boolean_value_false) {
+				m_boolean = false;
+			}
+			else {
+				m_boolean = true;
+			}
 			get_type_ref() = value_type::boolean_value;
+		}
+		void init(const char* v) {
+			if (!v) {
+				init("", 0);
+				return;
+			}
+			init(v, uint32_t(strlen(v)));
 		}
 		void init(uint32_t v) {
 			if (get_type_ref() == value_type::string_long_value && m_strlong) {
@@ -161,7 +178,7 @@ namespace nicehero {
 				m_strlong = nullptr;
 			}
 			if (cpystr.m_str == nullptr) {
-				init(nullptr);
+				init(nullptr,0);
 			}
 			auto len_ = cpystr.m_len;
 			if (len_ < 1) {
@@ -209,7 +226,7 @@ namespace nicehero {
 				get_type_ref() = value_type::string_long_value;
 			}
 		}
-		void init(const char* start, uint32_t len = 0) {
+		void init(const char* start, uint32_t len) {
 			if (get_type_ref() == value_type::string_long_value && m_strlong) {
 				delete[] m_strlong;
 				m_strlong = nullptr;
@@ -487,7 +504,12 @@ namespace nicehero {
 		template <class T>
 		viewvalue& operator=(const T& rhs) {
 			init(rhs);
-			return*this;
+			return *this;
+		}
+
+		viewvalue& operator=(const char* rhs) {
+			init(rhs);
+			return *this;
 		}
 
 		bool is_string() const {
